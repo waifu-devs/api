@@ -10,8 +10,8 @@ import { HTTPException } from "hono/http-exception"
 type Bindings = {
 	DATABASE_URL: string;
 	DATABASE_AUTH_TOKEN: string;
-	GITHUB_CLIENT_ID: string;
-	GITHUB_CLIENT_SECRET: string;
+	GH_CLIENT_ID: string;
+	GH_CLIENT_SECRET: string;
 }
 
 type Variables = {
