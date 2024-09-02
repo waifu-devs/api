@@ -33,7 +33,11 @@ jobs:
           secrets: |
             DATABASE_URL
             DATABASE_AUTH_TOKEN
+            GH_CLIENT_ID
+            GH_CLIENT_SECRET
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           DATABASE_AUTH_TOKEN: ${{ secrets.DATABASE_AUTH_TOKEN }}
+          GH_CLIENT_ID: ${{ secrets.GH_CLIENT_ID }}
+          GH_CLIENT_SECRET: ${{ secrets.GH_CLIENT_SECRET }}
           ENV: production
