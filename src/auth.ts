@@ -9,6 +9,7 @@ import { generateId } from "lucia"
 
 const WEB_AUTH_BASE_URL = process.env.NODE_ENV === "production" ? "https://www.waifu.dev/auth" : "http://localhost:3000/auth"
 const API_DOMAIN = process.env.NODE_ENV === "production" ? "waifu.dev" : "localhost"
+const GH_OAUTH_STATE_COOKIE = "github_oauth_state"
 
 const app = new Hono<C, {}, "/auth">()
 
@@ -57,7 +58,7 @@ app.get("/github", async (c) => {
 	const gh = github(c)
 	const state = generateState()
 	const url = await gh.createAuthorizationURL(state)
-	setCookie(c, "github_oauth_state", state, {
+	setCookie(c, GH_OAUTH_STATE_COOKIE, state, {
 		path: "/",
 		secure: process.env.NODE_ENV === "production",
 		httpOnly: true,
@@ -65,13 +66,13 @@ app.get("/github", async (c) => {
 		sameSite: "Lax",
 		domain: API_DOMAIN
 	})
-	return c.redirect(url.toString())
+	return c.redirect(url.toString(), 303)
 })
 
 app.get("/github/callback", async (c) => {
 	const code = c.req.query("code")?.toString() ?? null
 	const state = c.req.query("state")?.toString() ?? null
-	const storedState = getCookie(c).github_oauth_state ?? null
+	const storedState = getCookie(c)[GH_OAUTH_STATE_COOKIE] ?? null
 	if (!code || !state || !storedState || state !== storedState) {
 		throw new HTTPException(400, { message: "missing either code, state or non-matching states" })
 	}
