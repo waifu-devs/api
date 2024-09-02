@@ -6,6 +6,7 @@ import { initializeLucia } from "./lucia"
 import { Lucia, Session, User } from "lucia"
 import { authRoute, setUserSession } from "./auth"
 import { HTTPException } from "hono/http-exception"
+import { userRoute } from "./user"
 
 type Bindings = {
 	DATABASE_URL: string;
@@ -59,6 +60,7 @@ app.use(async (c, next) => {
 app.use(setUserSession);
 
 app.route("/auth", authRoute)
+app.route("/user", userRoute)
 
 app.get("/", async (c) => {
 	return c.json({
