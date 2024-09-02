@@ -12,6 +12,8 @@ type Bindings = {
 	DATABASE_AUTH_TOKEN: string;
 	GH_CLIENT_ID: string;
 	GH_CLIENT_SECRET: string;
+
+	API_RATELIMITER: RateLimit;
 }
 
 type Variables = {
@@ -40,6 +42,10 @@ app.onError(async (err, c) => {
 })
 
 app.use(async (c, next) => {
+	const { success } = await c.env.API_RATELIMITER.limit({ key: c.req.path })
+	if (!success) {
+		throw new HTTPException(429, { message: `rate limit hit for path ${c.req.path}` })
+	}
 	const dbClient = createClient({ url: c.env.DATABASE_URL, authToken: c.env.DATABASE_AUTH_TOKEN })
 	const db = drizzle(dbClient, { schema })
 	const lucia = initializeLucia(dbClient)

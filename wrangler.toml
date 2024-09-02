@@ -17,6 +17,13 @@ mode = "smart"
 pattern = "api.waifu.dev"
 custom_domain = true
 
+[[unsafe.bindings]]
+name = "API_RATELIMITER"
+type = "ratelimit"
+namespace_id = 1001
+# 20 requests per 10 seconds
+simple = { limit = 20, period = 10 }
+
 # Variable bindings. These are arbitrary, plaintext strings (similar to environment variables)
 # Docs:
 # - https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables

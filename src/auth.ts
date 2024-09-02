@@ -13,7 +13,7 @@ const API_DOMAIN = process.env.NODE_ENV === "production" ? "waifu.dev" : "localh
 const app = new Hono<C, {}, "/auth">()
 
 function github(c: Context<C>) {
-	return new GitHub(c.env.GITHUB_CLIENT_ID, c.env.GITHUB_CLIENT_SECRET)
+	return new GitHub(c.env.GH_CLIENT_ID, c.env.GH_CLIENT_SECRET)
 }
 
 export async function setUserSession(c: Context<C>, next: Next) {
@@ -46,6 +46,13 @@ export async function setUserSession(c: Context<C>, next: Next) {
 	return await next()
 }
 
+export async function isSignedIn(c: Context<C>, next: Next) {
+	if (!c.get("user")) {
+		throw new HTTPException(401, { message: "not signed in" })
+	}
+	return await next()
+}
+
 app.get("/github", async (c) => {
 	const gh = github(c)
 	const state = generateState()
@@ -74,7 +81,8 @@ app.get("/github/callback", async (c) => {
 	const tokens = await gh.validateAuthorizationCode(code)
 	const githubUserResponse = await fetch("https://api.github.com/user", {
 		headers: {
-			Authorization: `Bearer ${tokens.accessToken}`
+			Authorization: `Bearer ${tokens.accessToken}`,
+			"User-Agent": "waifu.dev"
 		}
 	})
 	if (!githubUserResponse.ok) {
