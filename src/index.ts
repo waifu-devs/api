@@ -1,18 +1,40 @@
-/**
- * Welcome to Cloudflare Workers! This is your first worker.
- *
- * - Run `npm run dev` in your terminal to start a development server
- * - Open a browser tab at http://localhost:8787/ to see your worker in action
- * - Run `npm run deploy` to publish your worker
- *
- * Bind resources to your worker in `wrangler.toml`. After adding bindings, a type definition for the
- * `Env` object can be regenerated with `npm run cf-typegen`.
- *
- * Learn more at https://developers.cloudflare.com/workers/
- */
+import { Hono } from "hono"
+import { drizzle, LibSQLDatabase } from "drizzle-orm/libsql"
+import { createClient } from "@libsql/client/web"
+import * as schema from "./database"
 
-export default {
-	async fetch(request, env, ctx): Promise<Response> {
-		return new Response('Hello World!');
-	},
-} satisfies ExportedHandler<Env>;
+type Bindings = {
+	DATABASE_URL: string;
+	DATABASE_AUTH_TOKEN: string;
+}
+
+type Variables = {
+	db: LibSQLDatabase<typeof schema>;
+}
+
+export type C = {
+	Bindings: Bindings;
+	Variables: Variables;
+}
+
+const app = new Hono<C>()
+
+app.use(async (c, next) => {
+	const dbClient = createClient({ url: c.env.DATABASE_URL, authToken: c.env.DATABASE_AUTH_TOKEN })
+	const db = drizzle(dbClient, { schema })
+
+	c.set("db", db)
+
+	await next()
+})
+
+app.get("/", async (c) => {
+	const db = c.get("db")
+	const results = await db.select().from(schema.users)
+	return c.json({
+		text: "Hello Waifu",
+		results,
+	})
+})
+
+export default app

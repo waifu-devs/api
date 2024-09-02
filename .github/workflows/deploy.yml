@@ -1,0 +1,34 @@
+name: Deploy api to cloudflare
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy_web:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    #   deployments: write
+    name: Deploy web
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+      - name: Run migrations
+        run: bun run db:migrate
+      - name: Deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          wranglerVersion: "3.60.3"
+          packageManager: bun
+          secrets: |
+            DATABSE_URL
+            DATABSE_AUTH_TOKEN
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_AUTH_TOKEN: ${{ secrets.DATABASE_AUTH_TOKEN }}
+          ENV: production
