@@ -7,7 +7,7 @@ import { users } from "./database"
 import { eq } from "drizzle-orm"
 import { generateId } from "lucia"
 
-const WEB_BASE_URL = process.env.NODE_ENV === "production" ? "https://www.waifu.dev/auth" : "http://localhost:3000/auth"
+const WEB_AUTH_BASE_URL = process.env.NODE_ENV === "production" ? "https://www.waifu.dev/auth" : "http://localhost:3000/auth"
 const API_DOMAIN = process.env.NODE_ENV === "production" ? "waifu.dev" : "localhost"
 
 const app = new Hono<C, {}, "/auth">()
@@ -73,7 +73,7 @@ app.get("/github/callback", async (c) => {
 	const state = c.req.query("state")?.toString() ?? null
 	const storedState = getCookie(c).github_oauth_state ?? null
 	if (!code || !state || !storedState || state !== storedState) {
-		throw new HTTPException(400)
+		throw new HTTPException(400, { message: "missing either code, state or non-matching states" })
 	}
 
 	const gh = github(c)
@@ -102,7 +102,7 @@ app.get("/github/callback", async (c) => {
 			...sessCookie.attributes,
 			domain: API_DOMAIN
 		})
-		return c.redirect(WEB_BASE_URL)
+		return c.redirect(WEB_AUTH_BASE_URL)
 	}
 	const userId = generateId(15)
 	await db.insert(users).values({
@@ -116,7 +116,7 @@ app.get("/github/callback", async (c) => {
 		...sessCookie.attributes,
 		domain: API_DOMAIN
 	})
-	return c.redirect(WEB_BASE_URL)
+	return c.redirect(WEB_AUTH_BASE_URL)
 })
 
 type GithubUser = {
