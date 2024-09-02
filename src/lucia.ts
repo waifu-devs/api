@@ -10,10 +10,15 @@ export function initializeLucia(client: Client) {
 		session: "sessions"
 	})
 	const lucia = new Lucia(adapter, {
+		sessionCookie: {
+			attributes: {
+				secure: process.env.NODE_ENV === "production"
+			}
+		},
 		getUserAttributes(databaseUserAttributes) {
 			return {
-				githubId: databaseUserAttributes.githubId,
-				githubUsername: databaseUserAttributes.githubUsername
+				githubId: databaseUserAttributes.github_id,
+				githubUsername: databaseUserAttributes.github_username
 			}
 		},
 	})
@@ -23,6 +28,9 @@ export function initializeLucia(client: Client) {
 declare module "lucia" {
 	interface Register {
 		Lucia: ReturnType<typeof initializeLucia>,
-		DatabaseUserAttributes: Omit<User, "id">
+		DatabaseUserAttributes: {
+			github_id: number | null;
+			github_username: string | null;
+		}
 	}
 }
