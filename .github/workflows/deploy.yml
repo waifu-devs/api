@@ -11,7 +11,7 @@ jobs:
     permissions:
       contents: read
     #   deployments: write
-    name: Deploy web
+    name: Deploy api
     steps:
       - uses: actions/checkout@v4
       - name: Setup Bun
