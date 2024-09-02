@@ -3,6 +3,7 @@ import { LibSQLAdapter } from "@lucia-auth/adapter-sqlite"
 import { Lucia } from "lucia"
 import { Context } from "hono"
 import { C } from "."
+import { API_DOMAIN } from "./auth"
 
 
 export function initializeLucia(client: Client, ctx: Context<C>) {
@@ -13,7 +14,8 @@ export function initializeLucia(client: Client, ctx: Context<C>) {
 	const lucia = new Lucia(adapter, {
 		sessionCookie: {
 			attributes: {
-				secure: ctx.env.ENV === "production"
+				secure: ctx.env.ENV === "production",
+				domain: API_DOMAIN(ctx)
 			}
 		},
 		getUserAttributes(databaseUserAttributes) {

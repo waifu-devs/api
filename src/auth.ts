@@ -8,7 +8,7 @@ import { eq } from "drizzle-orm"
 import { generateId } from "lucia"
 
 const WEB_AUTH_BASE_URL = (c: Context<C>) => c.env.ENV === "production" ? "https://www.waifu.dev/auth" : "http://localhost:3000/auth"
-const API_DOMAIN = (c: Context<C>) => c.env.ENV === "production" ? "waifu.dev" : "localhost"
+export const API_DOMAIN = (c: Context<C>) => c.env.ENV === "production" ? "waifu.dev" : "localhost"
 const GH_OAUTH_STATE_COOKIE = "github_oauth_state"
 
 const app = new Hono<C, {}, "/auth">()
