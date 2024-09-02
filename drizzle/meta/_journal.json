@@ -8,6 +8,13 @@
       "when": 1724951980078,
       "tag": "0000_short_hex",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1725299506996,
+      "tag": "0001_tense_lionheart",
+      "breakpoints": true
     }
   ]
 }
