@@ -35,6 +35,8 @@ jobs:
             DATABASE_AUTH_TOKEN
             GH_CLIENT_ID
             GH_CLIENT_SECRET
+          vars: |
+            ENV
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           DATABASE_AUTH_TOKEN: ${{ secrets.DATABASE_AUTH_TOKEN }}

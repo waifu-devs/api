@@ -6,10 +6,9 @@ import { HTTPException } from "hono/http-exception"
 import { users } from "./database"
 import { eq } from "drizzle-orm"
 import { generateId } from "lucia"
-import * as process from "node:process"
 
-const WEB_AUTH_BASE_URL = process.env.NODE_ENV === "production" ? "https://www.waifu.dev/auth" : "http://localhost:3000/auth"
-const API_DOMAIN = process.env.NODE_ENV === "production" ? "waifu.dev" : "localhost"
+const WEB_AUTH_BASE_URL = (c: Context<C>) => c.env.ENV === "production" ? "https://www.waifu.dev/auth" : "http://localhost:3000/auth"
+const API_DOMAIN = (c: Context<C>) => c.env.ENV === "production" ? "waifu.dev" : "localhost"
 const GH_OAUTH_STATE_COOKIE = "github_oauth_state"
 
 const app = new Hono<C, {}, "/auth">()
@@ -31,14 +30,14 @@ export async function setUserSession(c: Context<C>, next: Next) {
 		const sessCookie = lucia.createSessionCookie(session.id)
 		setCookie(c, sessCookie.name, sessCookie.value, {
 			...sessCookie.attributes,
-			domain: API_DOMAIN
+			domain: API_DOMAIN(c)
 		})
 	}
 	if (!session) {
 		const sessCookie = lucia.createBlankSessionCookie()
 		setCookie(c, sessCookie.name, sessCookie.value, {
 			...sessCookie.attributes,
-			domain: API_DOMAIN
+			domain: API_DOMAIN(c)
 		})
 	}
 
@@ -65,7 +64,7 @@ app.get("/github", async (c) => {
 		httpOnly: true,
 		maxAge: 60 * 10,
 		sameSite: "Lax",
-		domain: API_DOMAIN
+		domain: API_DOMAIN(c)
 	})
 	return c.redirect(url.toString(), 303)
 })
@@ -102,9 +101,9 @@ app.get("/github/callback", async (c) => {
 		const sessCookie = lucia.createSessionCookie(session.id)
 		setCookie(c, sessCookie.name, sessCookie.value, {
 			...sessCookie.attributes,
-			domain: API_DOMAIN
+			domain: API_DOMAIN(c)
 		})
-		return c.redirect(WEB_AUTH_BASE_URL)
+		return c.redirect(WEB_AUTH_BASE_URL(c))
 	}
 	const userId = generateId(15)
 	await db.insert(users).values({
@@ -116,9 +115,9 @@ app.get("/github/callback", async (c) => {
 	const sessCookie = lucia.createSessionCookie(session.id)
 	setCookie(c, sessCookie.name, sessCookie.value, {
 		...sessCookie.attributes,
-		domain: API_DOMAIN
+		domain: API_DOMAIN(c)
 	})
-	return c.redirect(WEB_AUTH_BASE_URL)
+	return c.redirect(WEB_AUTH_BASE_URL(c))
 })
 
 type GithubUser = {

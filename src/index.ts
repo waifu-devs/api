@@ -13,6 +13,7 @@ type Bindings = {
 	DATABASE_AUTH_TOKEN: string;
 	GH_CLIENT_ID: string;
 	GH_CLIENT_SECRET: string;
+	ENV: string;
 
 	API_RATELIMITER: RateLimit;
 }
@@ -49,7 +50,7 @@ app.use(async (c, next) => {
 	}
 	const dbClient = createClient({ url: c.env.DATABASE_URL, authToken: c.env.DATABASE_AUTH_TOKEN })
 	const db = drizzle(dbClient, { schema })
-	const lucia = initializeLucia(dbClient)
+	const lucia = initializeLucia(dbClient, c)
 
 	c.set("db", db)
 	c.set("lucia", lucia)

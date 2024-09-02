@@ -1,10 +1,11 @@
 import { Client } from "@libsql/client/web"
 import { LibSQLAdapter } from "@lucia-auth/adapter-sqlite"
 import { Lucia } from "lucia"
-import { User } from "./database"
+import { Context } from "hono"
+import { C } from "."
 
 
-export function initializeLucia(client: Client) {
+export function initializeLucia(client: Client, ctx: Context<C>) {
 	const adapter = new LibSQLAdapter(client, {
 		user: "users",
 		session: "sessions"
@@ -12,7 +13,7 @@ export function initializeLucia(client: Client) {
 	const lucia = new Lucia(adapter, {
 		sessionCookie: {
 			attributes: {
-				secure: process.env.NODE_ENV === "production"
+				secure: ctx.env.ENV === "production"
 			}
 		},
 		getUserAttributes(databaseUserAttributes) {
