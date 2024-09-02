@@ -31,8 +31,8 @@ jobs:
           wranglerVersion: "3.60.3"
           packageManager: bun
           secrets: |
-            DATABSE_URL
-            DATABSE_AUTH_TOKEN
+            DATABASE_URL
+            DATABASE_AUTH_TOKEN
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           DATABASE_AUTH_TOKEN: ${{ secrets.DATABASE_AUTH_TOKEN }}
