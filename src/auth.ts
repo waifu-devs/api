@@ -6,6 +6,7 @@ import { HTTPException } from "hono/http-exception"
 import { users } from "./database"
 import { eq } from "drizzle-orm"
 import { generateId } from "lucia"
+import * as process from "node:process"
 
 const WEB_AUTH_BASE_URL = process.env.NODE_ENV === "production" ? "https://www.waifu.dev/auth" : "http://localhost:3000/auth"
 const API_DOMAIN = process.env.NODE_ENV === "production" ? "waifu.dev" : "localhost"
