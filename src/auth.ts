@@ -28,17 +28,11 @@ export async function setUserSession(c: Context<C>, next: Next) {
 	const { session, user } = await lucia.validateSession(sessionId)
 	if (session && session.fresh) {
 		const sessCookie = lucia.createSessionCookie(session.id)
-		setCookie(c, sessCookie.name, sessCookie.value, {
-			...sessCookie.attributes,
-			domain: API_DOMAIN(c)
-		})
+		setCookie(c, sessCookie.name, sessCookie.value, sessCookie.attributes)
 	}
 	if (!session) {
 		const sessCookie = lucia.createBlankSessionCookie()
-		setCookie(c, sessCookie.name, sessCookie.value, {
-			...sessCookie.attributes,
-			domain: API_DOMAIN(c)
-		})
+		setCookie(c, sessCookie.name, sessCookie.value, sessCookie.attributes)
 	}
 
 	c.set("user", user)
@@ -60,7 +54,7 @@ app.get("/github", async (c) => {
 	const url = await gh.createAuthorizationURL(state)
 	setCookie(c, GH_OAUTH_STATE_COOKIE, state, {
 		path: "/",
-		secure: process.env.NODE_ENV === "production",
+		secure: c.env.ENV === "production",
 		httpOnly: true,
 		maxAge: 60 * 10,
 		sameSite: "Lax",
@@ -99,10 +93,7 @@ app.get("/github/callback", async (c) => {
 	if (exUser) {
 		const session = await lucia.createSession(exUser.id, {})
 		const sessCookie = lucia.createSessionCookie(session.id)
-		setCookie(c, sessCookie.name, sessCookie.value, {
-			...sessCookie.attributes,
-			domain: API_DOMAIN(c)
-		})
+		setCookie(c, sessCookie.name, sessCookie.value, sessCookie.attributes)
 		return c.redirect(WEB_AUTH_BASE_URL(c))
 	}
 	const userId = generateId(15)
@@ -113,10 +104,7 @@ app.get("/github/callback", async (c) => {
 	})
 	const session = await lucia.createSession(userId, {})
 	const sessCookie = lucia.createSessionCookie(session.id)
-	setCookie(c, sessCookie.name, sessCookie.value, {
-		...sessCookie.attributes,
-		domain: API_DOMAIN(c)
-	})
+	setCookie(c, sessCookie.name, sessCookie.value, sessCookie.attributes)
 	return c.redirect(WEB_AUTH_BASE_URL(c))
 })
 
