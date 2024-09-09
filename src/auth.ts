@@ -7,14 +7,14 @@ import { users } from "./database"
 import { eq } from "drizzle-orm"
 import { generateId } from "lucia"
 
-const WEB_AUTH_BASE_URL = (c: Context<C>) => c.env.ENV === "production" ? "https://www.waifu.dev/auth" : "http://localhost:3000/auth"
-export const API_DOMAIN = (c: Context<C>) => c.env.ENV === "production" ? "waifu.dev" : "localhost"
+const WEB_AUTH_BASE_URL = (c: Context<C>) => process.env.NODE_ENV === "production" ? "https://www.waifu.dev/auth" : "http://localhost:3000/auth"
+export const API_DOMAIN = (c: Context<C>) => process.env.NODE_ENV === "production" ? "waifu.dev" : "localhost"
 const GH_OAUTH_STATE_COOKIE = "github_oauth_state"
 
 const app = new Hono<C, {}, "/auth">()
 
 function github(c: Context<C>) {
-	return new GitHub(c.env.GH_CLIENT_ID, c.env.GH_CLIENT_SECRET)
+	return new GitHub(process.env.GH_CLIENT_ID, process.env.GH_CLIENT_SECRET)
 }
 
 export async function setUserSession(c: Context<C>, next: Next) {
@@ -54,7 +54,7 @@ app.get("/github", async (c) => {
 	const url = await gh.createAuthorizationURL(state)
 	setCookie(c, GH_OAUTH_STATE_COOKIE, state, {
 		path: "/",
-		secure: c.env.ENV === "production",
+		secure: process.env.NODE_ENV === "production",
 		httpOnly: true,
 		maxAge: 60 * 10,
 		sameSite: "Lax",

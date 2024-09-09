@@ -9,11 +9,11 @@ import { HTTPException } from "hono/http-exception"
 import { userRoute } from "./user"
 
 type Bindings = {
-	DATABASE_URL: string;
-	DATABASE_AUTH_TOKEN: string;
-	GH_CLIENT_ID: string;
-	GH_CLIENT_SECRET: string;
-	ENV: string;
+	//DATABASE_URL: string;
+	//DATABASE_AUTH_TOKEN: string;
+	//GH_CLIENT_ID: string;
+	//GH_CLIENT_SECRET: string;
+	//ENV: string;
 
 	//API_RATELIMITER: RateLimit;
 }
@@ -48,7 +48,7 @@ app.use(async (c, next) => {
 	//if (!success) {
 	//	throw new HTTPException(429, { message: `rate limit hit for path ${c.req.path}` })
 	//}
-	const dbClient = createClient({ url: c.env.DATABASE_URL, authToken: c.env.DATABASE_AUTH_TOKEN })
+	const dbClient = createClient({ url: process.env.DATABASE_URL, authToken: process.env.DATABASE_AUTH_TOKEN })
 	const db = drizzle(dbClient, { schema })
 	const lucia = initializeLucia(dbClient, c)
 
