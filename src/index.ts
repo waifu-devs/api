@@ -69,7 +69,7 @@ app.get("/", async (c) => {
 	})
 })
 
-const port = parseInt(process.env.PORT!) || 3000
+const port = parseInt(process.env.PORT!) || 3001
 console.log(`Running at http://localhost:${port}`)
 
 export default {
