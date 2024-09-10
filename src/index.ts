@@ -36,6 +36,11 @@ const app = new Hono<C>()
 
 app.onError(async (err, c) => {
 	console.error(err)
+	//@ts-expect-error
+	if (err.query) {
+		//@ts-expect-error
+		console.error(err.query)
+	}
 	if (err instanceof HTTPException) {
 		if (err.status >= 500) {
 			console.log(JSON.stringify({ message: err.message, status: err.status }))
