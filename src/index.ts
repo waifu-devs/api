@@ -7,6 +7,7 @@ import { Lucia, Session, User } from "lucia"
 import { authRoute, setUserSession } from "./auth"
 import { HTTPException } from "hono/http-exception"
 import { userRoute } from "./user"
+import { logger } from "hono/logger"
 
 type Bindings = {
 	//DATABASE_URL: string;
@@ -34,6 +35,7 @@ export type C = {
 const app = new Hono<C>()
 
 app.onError(async (err, c) => {
+	console.log(JSON.stringify({ message: err.message }))
 	if (err instanceof HTTPException) {
 		if (err.status >= 500) {
 			console.log(JSON.stringify({ message: err.message, status: err.status }))
@@ -42,6 +44,8 @@ app.onError(async (err, c) => {
 	}
 	return c.json({ message: err.message }, 500)
 })
+
+app.use(logger())
 
 app.use(async (c, next) => {
 	//const { success } = await c.env.API_RATELIMITER.limit({ key: c.req.path })
