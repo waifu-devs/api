@@ -15,14 +15,14 @@ export const users = pgTable("users", {
 
 export const sessions = pgTable("sessions", {
 	id: text("id").primaryKey().notNull(),
-	user_id: text("user_id").notNull().references(() => users.id),
+	userId: text("user_id").notNull().references(() => users.id),
 	expires_at: timestamp("expires_at", {
 		withTimezone: true,
 		mode: "date"
 	}).notNull(),
 }, (table) => {
 	return {
-		sessions_user_id_idx: index("sessions_user_id_idx").on(table.user_id)
+		sessions_user_id_idx: index("sessions_user_id_idx").on(table.userId)
 	}
 })
 
