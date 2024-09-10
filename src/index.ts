@@ -54,7 +54,7 @@ app.use(async (c, next) => {
 	//}
 	const dbClient = postgres(process.env.DATABASE_URL)
 	const db = drizzle(dbClient, { schema })
-	const lucia = initializeLucia(c)
+	const lucia = initializeLucia(c, db)
 
 	c.set("db", db)
 	c.set("lucia", lucia)

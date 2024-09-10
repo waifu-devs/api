@@ -3,12 +3,12 @@ import { Lucia } from "lucia"
 import { Context } from "hono"
 import { C } from "."
 import { API_DOMAIN } from "./auth"
-import { sessions, users } from "./database"
+import * as schema from "./database"
+import { PostgresJsDatabase } from "drizzle-orm/postgres-js"
 
 
-export function initializeLucia(ctx: Context<C>) {
-	const drizzle = ctx.get("db")
-	const adapter = new DrizzlePostgreSQLAdapter(drizzle, sessions, users)
+export function initializeLucia(ctx: Context<C>, drizzle: PostgresJsDatabase<typeof schema>) {
+	const adapter = new DrizzlePostgreSQLAdapter(drizzle, schema.sessions, schema.users)
 	const lucia = new Lucia(adapter, {
 		sessionCookie: {
 			attributes: {
