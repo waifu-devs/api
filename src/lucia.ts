@@ -1,20 +1,18 @@
-import { Client } from "@libsql/client/web"
-import { LibSQLAdapter } from "@lucia-auth/adapter-sqlite"
+import { DrizzlePostgreSQLAdapter } from "@lucia-auth/adapter-drizzle"
 import { Lucia } from "lucia"
 import { Context } from "hono"
 import { C } from "."
 import { API_DOMAIN } from "./auth"
+import { sessions, users } from "./database"
 
 
-export function initializeLucia(client: Client, ctx: Context<C>) {
-	const adapter = new LibSQLAdapter(client, {
-		user: "users",
-		session: "sessions"
-	})
+export function initializeLucia(ctx: Context<C>) {
+	const drizzle = ctx.get("db")
+	const adapter = new DrizzlePostgreSQLAdapter(drizzle, sessions, users)
 	const lucia = new Lucia(adapter, {
 		sessionCookie: {
 			attributes: {
-				secure: ctx.env.ENV === "production",
+				secure: process.env.NODE_ENV === "production",
 				domain: API_DOMAIN(ctx)
 			}
 		},

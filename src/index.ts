@@ -1,6 +1,6 @@
 import { Hono } from "hono"
-import { drizzle, LibSQLDatabase } from "drizzle-orm/libsql"
-import { createClient } from "@libsql/client/web"
+import { drizzle, PostgresJsDatabase } from "drizzle-orm/postgres-js"
+import postgres from "postgres"
 import * as schema from "./database"
 import { initializeLucia } from "./lucia"
 import { Lucia, Session, User } from "lucia"
@@ -19,7 +19,7 @@ type Bindings = {
 }
 
 type Variables = {
-	db: LibSQLDatabase<typeof schema>;
+	db: PostgresJsDatabase<typeof schema>;
 	lucia: Lucia;
 
 	user: User | null;
@@ -48,9 +48,9 @@ app.use(async (c, next) => {
 	//if (!success) {
 	//	throw new HTTPException(429, { message: `rate limit hit for path ${c.req.path}` })
 	//}
-	const dbClient = createClient({ url: process.env.DATABASE_URL, authToken: process.env.DATABASE_AUTH_TOKEN })
+	const dbClient = postgres(process.env.DATABASE_URL)
 	const db = drizzle(dbClient, { schema })
-	const lucia = initializeLucia(dbClient, c)
+	const lucia = initializeLucia(c)
 
 	c.set("db", db)
 	c.set("lucia", lucia)

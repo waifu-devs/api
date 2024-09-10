@@ -1,9 +1,9 @@
 import { InferSelectModel } from "drizzle-orm";
-import { index, integer, sqliteTable, text, unique } from "drizzle-orm/sqlite-core";
+import { index, integer, pgTable, text, timestamp, unique } from "drizzle-orm/pg-core";
 
 
 
-export const users = sqliteTable("users", {
+export const users = pgTable("users", {
 	id: text("id").primaryKey().notNull(),
 	githubId: integer("github_id"),
 	githubUsername: text("github_username")
@@ -13,10 +13,13 @@ export const users = sqliteTable("users", {
 	}
 })
 
-export const sessions = sqliteTable("sessions", {
+export const sessions = pgTable("sessions", {
 	id: text("id").primaryKey().notNull(),
-	expires_at: integer("expires_at").notNull(),
 	user_id: text("user_id").notNull(),
+	expires_at: timestamp("expires_at", {
+		withTimezone: true,
+		mode: "date"
+	}).notNull(),
 }, (table) => {
 	return {
 		sessions_user_id_idx: index("sessions_user_id_idx").on(table.user_id)
