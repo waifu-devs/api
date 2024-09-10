@@ -35,7 +35,7 @@ export type C = {
 const app = new Hono<C>()
 
 app.onError(async (err, c) => {
-	console.log(JSON.stringify({ message: err.message }))
+	console.error(err)
 	if (err instanceof HTTPException) {
 		if (err.status >= 500) {
 			console.log(JSON.stringify({ message: err.message, status: err.status }))
