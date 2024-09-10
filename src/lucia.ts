@@ -18,8 +18,8 @@ export function initializeLucia(ctx: Context<C>, drizzle: PostgresJsDatabase<typ
 		},
 		getUserAttributes(databaseUserAttributes) {
 			return {
-				githubId: databaseUserAttributes.github_id,
-				githubUsername: databaseUserAttributes.github_username
+				githubId: databaseUserAttributes.githubId,
+				githubUsername: databaseUserAttributes.githubUsername
 			}
 		},
 	})
@@ -29,9 +29,6 @@ export function initializeLucia(ctx: Context<C>, drizzle: PostgresJsDatabase<typ
 declare module "lucia" {
 	interface Register {
 		Lucia: ReturnType<typeof initializeLucia>,
-		DatabaseUserAttributes: {
-			github_id: number | null;
-			github_username: string | null;
-		}
+		DatabaseUserAttributes: schema.User
 	}
 }
