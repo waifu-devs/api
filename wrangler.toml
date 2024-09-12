@@ -2,7 +2,7 @@
 name = "waifu-dev-api"
 main = "src/index.ts"
 compatibility_date = "2024-08-21"
-compatibility_flags = ["nodejs_compat_v2"]
+compatibility_flags = ["experimental:nodejs_compat_v2"]
 
 workers_dev = false
 
