@@ -22,7 +22,6 @@ jobs:
         run: bun run db:migrate
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          DATABASE_AUTH_TOKEN: ${{ secrets.DATABASE_AUTH_TOKEN }}
       - name: Deploy
         uses: cloudflare/wrangler-action@v3
         with:
@@ -31,15 +30,11 @@ jobs:
           wranglerVersion: "3.60.3"
           packageManager: bun
           secrets: |
-            DATABASE_URL
-            DATABASE_AUTH_TOKEN
             GH_CLIENT_ID
             GH_CLIENT_SECRET
           vars: |
             ENV
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          DATABASE_AUTH_TOKEN: ${{ secrets.DATABASE_AUTH_TOKEN }}
           GH_CLIENT_ID: ${{ secrets.GH_CLIENT_ID }}
           GH_CLIENT_SECRET: ${{ secrets.GH_CLIENT_SECRET }}
           ENV: production
