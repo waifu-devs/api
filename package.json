@@ -3,13 +3,17 @@
 	"version": "0.0.0",
 	"private": true,
 	"scripts": {
-		"dev": "bun run --hot src/index.ts",
-		"start": "bun src/index.ts",
+		"deploy": "wrangler deploy",
+		"dev": "wrangler dev",
+		"start": "wrangler dev",
 		"test": "bunx vitest",
+		"cf-typegen": "wrangler types",
 		"db:generate": "bunx drizzle-kit generate",
 		"db:migrate": "bunx drizzle-kit migrate"
 	},
 	"devDependencies": {
+		"@cloudflare/vitest-pool-workers": "^0.4.30",
+		"@cloudflare/workers-types": "^4.20240909.0",
 		"@types/bun": "^1.1.8",
 		"drizzle-kit": "^0.24.2",
 		"typescript": "^5.5.2",
