@@ -2,7 +2,7 @@
 name = "waifu-dev-api"
 main = "src/index.ts"
 compatibility_date = "2024-08-21"
-compatibility_flags = ["nodejs_compat"]
+compatibility_flags = ["nodejs_compat_v2"]
 
 workers_dev = false
 
@@ -16,6 +16,11 @@ mode = "smart"
 [[routes]]
 pattern = "api.waifu.dev"
 custom_domain = true
+
+
+[[hyperdrive]]
+binding = "HYPERDRIVE"
+id = "7149415fc7d545cd9ca7c84432d8a47a"
 
 [[unsafe.bindings]]
 name = "API_RATELIMITER"

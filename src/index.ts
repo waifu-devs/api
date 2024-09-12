@@ -10,13 +10,12 @@ import { userRoute } from "./user"
 import { logger } from "hono/logger"
 
 type Bindings = {
-	//DATABASE_URL: string;
-	//DATABASE_AUTH_TOKEN: string;
-	//GH_CLIENT_ID: string;
-	//GH_CLIENT_SECRET: string;
-	//ENV: string;
+	GH_CLIENT_ID: string;
+	GH_CLIENT_SECRET: string;
+	ENV: string;
 
-	//API_RATELIMITER: RateLimit;
+	API_RATELIMITER: RateLimit;
+	HYPERDRIVE: Hyperdrive;
 }
 
 type Variables = {
@@ -53,11 +52,7 @@ app.onError(async (err, c) => {
 app.use(logger())
 
 app.use(async (c, next) => {
-	//const { success } = await c.env.API_RATELIMITER.limit({ key: c.req.path })
-	//if (!success) {
-	//	throw new HTTPException(429, { message: `rate limit hit for path ${c.req.path}` })
-	//}
-	const dbClient = postgres(process.env.DATABASE_URL)
+	const dbClient = postgres(c.env.HYPERDRIVE.connectionString)
 	const db = drizzle(dbClient, { schema })
 	const lucia = initializeLucia(c, db)
 
@@ -69,6 +64,23 @@ app.use(async (c, next) => {
 
 app.use(setUserSession)
 
+app.use(async (c, next) => {
+	const user = c.get("user")
+
+	const ratelimitKey = user?.id ?? c.req.header("CF-Connecting-IP") ?? c.req.header("X-Forwarded-For")
+
+	if (!ratelimitKey) {
+		throw new HTTPException(429, { message: `rate limit hit, could not get key` })
+	}
+
+	const { success } = await c.env.API_RATELIMITER.limit({ key: ratelimitKey })
+	if (!success) {
+		throw new HTTPException(429, { message: `rate limit hit for key ${ratelimitKey}` })
+	}
+
+	return await next()
+})
+
 app.route("/auth", authRoute)
 app.route("/user", userRoute)
 
@@ -78,10 +90,4 @@ app.get("/", async (c) => {
 	})
 })
 
-const port = parseInt(process.env.PORT!) || 3001
-console.log(`Running at http://localhost:${port}`)
-
-export default {
-	port,
-	fetch: app.fetch,
-}
+export default app
