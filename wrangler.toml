@@ -18,9 +18,11 @@ pattern = "api.waifu.dev"
 custom_domain = true
 
 
-[[hyperdrive]]
-binding = "HYPERDRIVE"
-id = "7149415fc7d545cd9ca7c84432d8a47a"
+[[d1_databases]]
+binding = "DB"
+database_name = "waifu-dev-db"
+database_id = "cb709964-ee09-47db-bb08-341a13832900"
+migrations_dir = "drizzle"
 
 [[unsafe.bindings]]
 name = "API_RATELIMITER"

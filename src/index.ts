@@ -1,6 +1,5 @@
 import { Hono } from "hono"
-import { drizzle, PostgresJsDatabase } from "drizzle-orm/postgres-js"
-import postgres from "postgres"
+import { drizzle, DrizzleD1Database } from "drizzle-orm/d1"
 import * as schema from "./database"
 import { initializeLucia } from "./lucia"
 import { Lucia, Session, User } from "lucia"
@@ -9,17 +8,12 @@ import { HTTPException } from "hono/http-exception"
 import { userRoute } from "./user"
 import { logger } from "hono/logger"
 
-type Bindings = {
-	GH_CLIENT_ID: string;
-	GH_CLIENT_SECRET: string;
-	ENV: string;
-
+type Bindings = Env & {
 	API_RATELIMITER: RateLimit;
-	HYPERDRIVE: Hyperdrive;
 }
 
 type Variables = {
-	db: PostgresJsDatabase<typeof schema>;
+	db: DrizzleD1Database<typeof schema>;
 	lucia: Lucia;
 
 	user: User | null;
@@ -52,8 +46,7 @@ app.onError(async (err, c) => {
 app.use(logger())
 
 app.use(async (c, next) => {
-	const dbClient = postgres(c.env.HYPERDRIVE.connectionString)
-	const db = drizzle(dbClient, { schema })
+	const db = drizzle(c.env.DB, { schema })
 	const lucia = initializeLucia(c, db)
 
 	c.set("db", db)

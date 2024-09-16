@@ -1,12 +1,13 @@
 import { defineConfig } from "drizzle-kit"
-import { config } from "dotenv"
+
 
 export default defineConfig({
 	schema: "./src/database.ts",
 	out: "./drizzle",
-	dialect: "postgresql",
+	dialect: "sqlite",
+	driver: "turso",
 	dbCredentials: {
-		url: process.env.DATABASE_URL!,
+		url: ".wrangler/state/v3/d1/miniflare-D1DatabaseObject/9f9d42bb952cec24b95a12f0c9848b4a17b358b8e780b6f6b706543c65224df3.sqlite"
 	},
 	verbose: true
 })

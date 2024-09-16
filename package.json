@@ -9,7 +9,7 @@
 		"test": "bunx vitest",
 		"cf-typegen": "wrangler types",
 		"db:generate": "bunx drizzle-kit generate",
-		"db:migrate": "bunx drizzle-kit migrate"
+		"db:migrate": "wrangler d1 migrations apply waifu-dev-db --local"
 	},
 	"devDependencies": {
 		"@cloudflare/vitest-pool-workers": "^0.4.30",
@@ -26,7 +26,6 @@
 		"dotenv": "^16.4.5",
 		"drizzle-orm": "^0.33.0",
 		"hono": "^4.5.9",
-		"lucia": "^3.2.0",
-		"postgres": "^3.4.4"
+		"lucia": "^3.2.0"
 	}
 }
