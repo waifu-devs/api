@@ -12,7 +12,7 @@ export function initializeLucia(ctx: Context<C>, drizzle: DrizzleD1Database<type
 	const lucia = new Lucia(adapter, {
 		sessionCookie: {
 			attributes: {
-				secure: process.env.NODE_ENV === "production",
+				secure: ctx.env.ENV === "production",
 				domain: API_DOMAIN(ctx)
 			}
 		},
