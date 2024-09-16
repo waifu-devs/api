@@ -21,7 +21,7 @@ custom_domain = true
 [[d1_databases]]
 binding = "DB"
 database_name = "waifu-dev-db"
-database_id = "cb709964-ee09-47db-bb08-341a13832900"
+database_id = "c7f321b0-865d-4d3d-8ffb-e420f1e08ad0"
 migrations_dir = "drizzle"
 
 [[unsafe.bindings]]

@@ -60,7 +60,7 @@ app.use(setUserSession)
 app.use(async (c, next) => {
 	const user = c.get("user")
 
-	const ratelimitKey = user?.id ?? c.req.header("CF-Connecting-IP") ?? c.req.header("X-Forwarded-For")
+	const ratelimitKey = user?.id ?? c.req.header("cf-connecting-ip") ?? c.req.header("x-forwarded-for")
 
 	if (!ratelimitKey) {
 		throw new HTTPException(429, { message: `rate limit hit, could not get key` })
