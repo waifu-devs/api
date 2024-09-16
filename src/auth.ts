@@ -99,7 +99,7 @@ app.get("/github/callback", async (c) => {
 		return c.redirect(WEB_AUTH_BASE_URL(c))
 	}
 	const userId = ulid()
-	db.insert(users).values({
+	await db.insert(users).values({
 		id: userId,
 		githubId: +githubUser.id,
 		githubUsername: githubUser.login,
