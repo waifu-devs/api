@@ -5,7 +5,9 @@ import { setCookie, getCookie } from "hono/cookie"
 import { HTTPException } from "hono/http-exception"
 import { users } from "./database"
 import { eq } from "drizzle-orm"
-import { ulid } from "ulidx"
+import { monotonicFactory } from "ulidx"
+
+const ulid = monotonicFactory()
 
 const WEB_AUTH_BASE_URL = (c: Context<C>) => c.env.ENV === "production" ? "https://www.waifu.dev/auth" : "http://localhost:3000/auth"
 export const API_DOMAIN = (c: Context<C>) => c.env.ENV === "production" ? "waifu.dev" : "localhost"
