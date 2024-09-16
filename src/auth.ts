@@ -5,7 +5,7 @@ import { setCookie, getCookie } from "hono/cookie"
 import { HTTPException } from "hono/http-exception"
 import { users } from "./database"
 import { eq } from "drizzle-orm"
-import { generateId } from "lucia"
+import { ulid } from "ulidx"
 
 const WEB_AUTH_BASE_URL = (c: Context<C>) => c.env.ENV === "production" ? "https://www.waifu.dev/auth" : "http://localhost:3000/auth"
 export const API_DOMAIN = (c: Context<C>) => c.env.ENV === "production" ? "waifu.dev" : "localhost"
@@ -96,8 +96,8 @@ app.get("/github/callback", async (c) => {
 		setCookie(c, sessCookie.name, sessCookie.value, sessCookie.attributes)
 		return c.redirect(WEB_AUTH_BASE_URL(c))
 	}
-	const userId = generateId(15)
-	await db.insert(users).values({
+	const userId = ulid()
+	db.insert(users).values({
 		id: userId,
 		githubId: +githubUser.id,
 		githubUsername: githubUser.login,
