@@ -22,7 +22,7 @@ jobs:
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
-          wranglerVersion: "3.60.3"
+          wranglerVersion: "3.78.6"
           packageManager: bun
           command: d1 migrations apply waifu-dev-db --remote
       - name: Deploy
@@ -30,7 +30,7 @@ jobs:
         with:
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
           apiToken: ${{ secrets.CF_API_TOKEN }}
-          wranglerVersion: "3.60.3"
+          wranglerVersion: "3.78.6"
           packageManager: bun
           secrets: |
             GH_CLIENT_ID
